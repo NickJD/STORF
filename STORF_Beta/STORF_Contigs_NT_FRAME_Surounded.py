@@ -137,14 +137,19 @@ for Contig_ID, Contig in Contigs.items():
                     if next_stop not in Seen_Stops:
                         if diff >= minOrfSize and diff <= maxOrfSize:
 
-                            if ORFNum >1:
+                            if ORFNum >0:
+
+                                if stop > PrevStop and next_stop < PrevNext:
+
+                                    break
+
+
                                 GeneA[stop:next_stop] = [1] * (next_stop - stop)
                                 length = next_stop - stop
                                 prevlength = PrevNext - PrevStop
                                 Gene_AND = GenePrev & GeneA
 
-                                if stop > PrevStop and next_stop < PrevNext:
-                                    break
+
 
                                 if np.count_nonzero(Gene_AND) <= (length * 0.5):
 
@@ -153,14 +158,19 @@ for Contig_ID, Contig in Contigs.items():
                                     Frames.update({stop:next_stop})
                                     Found = True
                                     Seen_Stops.append(next_stop)
+                                GenePrev = GeneA
+                                PrevStop = stop
+                                PrevNext = next_stop
+                                ORFNum += 1
                             else:
                                 Frames.update({stop:next_stop})
                                 Found = True
                                 Seen_Stops.append(next_stop)
-                        GenePrev = GeneA
-                        PrevStop = stop
-                        PrevNext = next_stop
-                        ORFNum += 1
+                                GenePrev = GeneA
+                                PrevStop = stop
+                                PrevNext = next_stop
+                                ORFNum += 1
+
                         break
 
         counter +=1
