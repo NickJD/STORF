@@ -121,9 +121,9 @@ for Contig_ID, Contig in Contigs.items():
     Seen_Stops = []
     counter = 0
     Stop_Stop = collections.OrderedDict()
-    ORFNum = 0
-    Lengths = []
 
+    Lengths = []
+    First = True
     for stop in stops: # Finds Stop-Stop#
         GeneA = np.zeros((Genome_Size), dtype=np.int)
         Found = False
@@ -137,7 +137,7 @@ for Contig_ID, Contig in Contigs.items():
                     if next_stop not in Seen_Stops:
                         if diff >= minOrfSize and diff <= maxOrfSize:
 
-                            if ORFNum >0:
+                            if First == False:
 
                                 if stop > PrevStop and next_stop < PrevNext:
 
@@ -151,17 +151,27 @@ for Contig_ID, Contig in Contigs.items():
 
 
 
-                                if np.count_nonzero(Gene_AND) <= (length * 0.5):
+                                if np.count_nonzero(Gene_AND) <= (length * 0.5): //Work here
 
 
 
                                     Frames.update({stop:next_stop})
                                     Found = True
                                     Seen_Stops.append(next_stop)
-                                GenePrev = GeneA
-                                PrevStop = stop
-                                PrevNext = next_stop
-                                ORFNum += 1
+                                    GenePrev = GeneA
+                                    PrevStop = stop
+                                    PrevNext = next_stop
+                                elif np.count_nonzero(Gene_AND) <= (length * 0.5) and length > prevlength:
+                                    del Frames[PrevStop]
+                                    Frames.update({stop:next_stop})
+                                    Found = True
+                                    Seen_Stops.append(next_stop)
+                                    GenePrev = GeneA
+                                    PrevStop = stop
+                                    PrevNext = next_stop
+
+
+
                             else:
                                 Frames.update({stop:next_stop})
                                 Found = True
@@ -169,7 +179,8 @@ for Contig_ID, Contig in Contigs.items():
                                 GenePrev = GeneA
                                 PrevStop = stop
                                 PrevNext = next_stop
-                                ORFNum += 1
+                                First = False
+
 
                         break
 
