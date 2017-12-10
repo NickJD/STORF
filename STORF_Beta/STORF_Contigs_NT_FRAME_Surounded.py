@@ -1,6 +1,6 @@
 import sys
 import numpy as np
-
+import cProfile
 
 sequence = sys.argv[1]
 minOrfSize = int(sys.argv[2])
@@ -99,7 +99,7 @@ with open (sequence, 'rb') as Gfile: #Input file
         if ">" not in line:
             Contig += str(line)
 
-
+STORF = 0
 for Contig_ID, Contig in Contigs.items():
 
 
@@ -151,7 +151,7 @@ for Contig_ID, Contig in Contigs.items():
 
 
 
-                                if np.count_nonzero(Gene_AND) <= (length * 0.5): //Work here
+                                if np.count_nonzero(Gene_AND) <= (length * 0.2) and np.count_nonzero(Gene_AND) <= 20:
 
 
 
@@ -161,7 +161,7 @@ for Contig_ID, Contig in Contigs.items():
                                     GenePrev = GeneA
                                     PrevStop = stop
                                     PrevNext = next_stop
-                                elif np.count_nonzero(Gene_AND) <= (length * 0.5) and length > prevlength:
+                                elif np.count_nonzero(Gene_AND) <= (length * 0.2)  and np.count_nonzero(Gene_AND) <= 20 and length > prevlength:
                                     del Frames[PrevStop]
                                     Frames.update({stop:next_stop})
                                     Found = True
@@ -194,7 +194,7 @@ for Contig_ID, Contig in Contigs.items():
     with open(output,'a') as out:
         out.truncate()
         #out.write("Frame 1 \n")
-        STORF = 0
+
         for k, v in Frames.iteritems():
             Contig_ID = Contig_ID.replace('>','')
             out.write(">"+str(STORF)+":"+str(Contig_ID)+','+str(k) + "\t" + "+" + "\t" + str(v) + "\n")
@@ -277,7 +277,7 @@ for Contig_ID, Contig in Contigs.items():
     ###############
     with open(output,'a') as out:
         #out.write("Frame 4 \n")
-        STORF = 0
+
         for k, v in Frames_rev.iteritems():
             Contig_ID = Contig_ID.replace('>', '')
             out.write(">"+str(STORF)+":"+str(Contig_ID)+','+str(k) + "\t" + "-" + "\t" + str(v) + "\n")
